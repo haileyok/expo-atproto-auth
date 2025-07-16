@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "expo-atproto-auth": ["../src/index"],
+      "expo-atproto-auth/*": ["../src/*"]
+    }
+  }
+}
