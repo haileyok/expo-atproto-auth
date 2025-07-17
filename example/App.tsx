@@ -13,13 +13,13 @@ import {
   getRandomValues,
   createJwt,
   generateJwk,
-  ReactNativeOAuthClient,
+  ExpoOAuthClient,
 } from 'expo-atproto-auth'
 import { OAuthSession } from '@atproto/oauth-client'
 import { Agent } from '@atproto/api'
-import type { ReactNativeKey } from 'expo-atproto-auth'
+import type { ExpoKey } from 'expo-atproto-auth'
 
-const client = new ReactNativeOAuthClient({
+const client = new ExpoOAuthClient({
   clientMetadata: {
     client_id: 'https://hailey.at/oauth-client-metadata.json',
     client_name: 'React Native OAuth Client Demo',
@@ -39,9 +39,7 @@ export default function App() {
   const [values, setValues] = React.useState<Uint8Array>()
   const [sha, setSha] = React.useState<Uint8Array>()
   const [jwt, setJwt] = React.useState<string>()
-  const [privateJwk, setPrivateJwk] = React.useState<
-    ReactNativeKey | undefined
-  >()
+  const [privateJwk, setPrivateJwk] = React.useState<ExpoKey | undefined>()
   const [session, setSession] = React.useState<OAuthSession>()
   const [input, setInput] = React.useState<string>()
   const [agent, setAgent] = React.useState<Agent>()
@@ -96,7 +94,7 @@ export default function App() {
       <Button
         title="Create JWK"
         onPress={() => {
-          let newJwk: ReactNativeKey | undefined
+          let newJwk: ExpoKey | undefined
           try {
             newJwk = generateJwk('ES256')
           } catch (e: any) {

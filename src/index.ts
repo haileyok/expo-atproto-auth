@@ -6,6 +6,6 @@ export {
   createJwt,
   getRandomValues,
   verifyJwt,
-  ReactNativeKey,
-} from './react-native-key'
-export { ExpoOAuthClient as ReactNativeOAuthClient } from './react-native-oauth-client'
+  ExpoKey,
+} from './expo-key'
+export { ExpoOAuthClient } from './expo-oauth-client'

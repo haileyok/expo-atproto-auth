@@ -11,7 +11,7 @@ import type {
 import { type SimpleStore, type Value } from '@atproto-labs/simple-store'
 import { MMKV } from 'react-native-mmkv'
 import { JWK } from './ExpoAtprotoAuth.types'
-import { ReactNativeKey } from './react-native-key'
+import { ExpoKey } from './expo-key'
 
 type Item<V> = {
   value: V
@@ -45,9 +45,8 @@ function encodeKey(key: Key): EncodedKey {
   return encodedKey
 }
 
-async function decodeKey(encoded: EncodedKey): Promise<ReactNativeKey> {
-  console.log(encoded)
-  return new ReactNativeKey(encoded.keyPair.privateKey)
+async function decodeKey(encoded: EncodedKey): Promise<ExpoKey> {
+  return new ExpoKey(encoded.keyPair.privateKey)
 }
 
 export type Schema = {
@@ -82,17 +81,17 @@ const STORES = [
   'protectedResourceMetadataCache',
 ]
 
-export type ReactNativeOAuthDatabaseOptions = {
+export type ExpoOAuthDatabaseOptions = {
   name?: string
   durability?: 'strict' | 'relaxed'
   cleanupInterval?: number
 }
 
-export class ReactNativeOAuthDatabase {
+export class ExpoOAuthDatabase {
   #cleanupInterval?: ReturnType<typeof setInterval>
   #mmkv?: MMKV
 
-  constructor(options?: ReactNativeOAuthDatabaseOptions) {
+  constructor(options?: ExpoOAuthDatabaseOptions) {
     this.#cleanupInterval = setInterval(() => {
       this.cleanup()
     }, options?.cleanupInterval ?? 30e3)
@@ -118,7 +117,6 @@ export class ReactNativeOAuthDatabase {
   ): DatabaseStore<V> {
     return {
       get: async (key) => {
-        console.log(`getting ${name}.${key}`)
         const item = this.#mmkv?.getString(`${name}.${key}`)
 
         if (item === undefined) return undefined
@@ -132,7 +130,6 @@ export class ReactNativeOAuthDatabase {
         }
 
         const res = decode(JSON.parse(item))
-        console.log(res)
         return res
       },
 

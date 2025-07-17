@@ -7,13 +7,13 @@ import {
   OAuthClient,
   OAuthSession,
 } from '@atproto/oauth-client'
-import { ReactNativeRuntimeImplementation } from './react-native-runtime-implementation'
-import { ReactNativeOAuthDatabase } from './react-native-oauth-database'
+import { ExpoRuntimeImplementation } from './expo-runtime-implementation'
+import { ExpoOAuthDatabase } from './expo-oauth-database'
 import { openAuthSessionAsync, WebBrowserResultType } from 'expo-web-browser'
 
 export type Simplify<T> = { [K in keyof T]: T[K] } & NonNullable<unknown>
 
-export type ReactNativeOAuthClientOptions = Simplify<
+export type ExpoOAuthClientOptions = Simplify<
   {
     clientMetadata?: Readonly<OAuthClientMetadataInput>
     responseMode?: Exclude<OAuthResponseMode, 'form_post'>
@@ -39,8 +39,8 @@ export class ExpoOAuthClient extends OAuthClient {
   constructor({
     responseMode = 'fragment',
     ...options
-  }: ReactNativeOAuthClientOptions) {
-    const database = new ReactNativeOAuthDatabase()
+  }: ExpoOAuthClientOptions) {
+    const database = new ExpoOAuthDatabase()
 
     if (!['query', 'fragment'].includes(responseMode)) {
       throw new TypeError(`Invalid response mode: ${responseMode}`)
@@ -56,7 +56,7 @@ export class ExpoOAuthClient extends OAuthClient {
         options.clientMetadata ?? atprotoLoopbackClientMetadata('localhost'), // HACK: this fixes a type error for now, look into it later
       responseMode,
       keyset: undefined,
-      runtimeImplementation: new ReactNativeRuntimeImplementation(),
+      runtimeImplementation: new ExpoRuntimeImplementation(),
       sessionStore: database.getSessionStore(),
       stateStore: database.getStateStore(),
       didCache: database.getDidCache(),

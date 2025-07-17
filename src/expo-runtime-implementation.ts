@@ -1,8 +1,8 @@
 import type { Key, RuntimeImplementation } from '@atproto/oauth-client'
 import { default as NativeModule } from './ExpoAtprotoAuthModule'
-import { generateJwk } from './react-native-key'
+import { generateJwk } from './expo-key'
 
-export class ReactNativeRuntimeImplementation implements RuntimeImplementation {
+export class ExpoRuntimeImplementation implements RuntimeImplementation {
   async createKey(algs: string[]): Promise<Key> {
     if (!algs.includes('ES256')) {
       throw TypeError('ES256 is the only supported algo')

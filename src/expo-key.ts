@@ -24,7 +24,7 @@ export function isECKey(jwk: any): jwk is JWK {
 export function createJwt(
   header: string,
   payload: string,
-  key: ReactNativeKey
+  key: ExpoKey
 ): string {
   if (!key.privateJwk || !isECKey(key.privateJwk)) {
     throw new Error('Invalid key')
@@ -41,7 +41,7 @@ export function verifyJwt(
 }
 
 // @ts-expect-error
-export class ReactNativeKey implements Key {
+export class ExpoKey implements Key {
   #jwk: Readonly<JWK>
 
   constructor(jwk: Readonly<JWK>) {
@@ -126,7 +126,7 @@ export class ReactNativeKey implements Key {
   }
 }
 
-export function generateJwk(algoritihim: string): ReactNativeKey {
+export function generateJwk(algoritihim: string): ExpoKey {
   const privJwk = NativeModule.generatePrivateJwk(algoritihim)
-  return new ReactNativeKey(privJwk)
+  return new ExpoKey(privJwk)
 }
