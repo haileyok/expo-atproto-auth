@@ -8,4 +8,4 @@ export {
   verifyJwt,
   ReactNativeKey,
 } from './react-native-key'
-export { ReactNativeOAuthClient } from './react-native-oauth-client'
+export { ExpoOAuthClient as ReactNativeOAuthClient } from './react-native-oauth-client'

@@ -13,7 +13,7 @@ class CryptoUtil: NSObject {
     return Data(bytes)
   }
 
-  static func generateJwk() -> JWK {
+  static func generateJwk() -> EncodedJWK {
     let kid = UUID().uuidString
 
     let privKey = P256.Signing.PrivateKey()
@@ -23,7 +23,7 @@ class CryptoUtil: NSObject {
     let y = pubKey.x963Representation[33...].base64URLEncodedString()
     let d = privKey.rawRepresentation.base64URLEncodedString()
 
-    let jwk = JWK()
+    let jwk = EncodedJWK()
     jwk.kty = "EC"
     jwk.use = "sig"
     jwk.crv = "P-256"
@@ -36,7 +36,7 @@ class CryptoUtil: NSObject {
     return jwk
   }
 
-  static func importJwk(x: String, y: String, d: String) throws -> SecKey {
+  static func decodeJwk(x: String, y: String, d: String) throws -> SecKey {
     func base64UrlDecode(_ string: String) -> Data? {
       var base64 = string
         .replacingOccurrences(of: "-", with: "+")

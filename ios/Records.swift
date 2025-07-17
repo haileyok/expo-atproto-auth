@@ -1,6 +1,6 @@
 import ExpoModulesCore
 
-struct JWK: Record {
+struct EncodedJWK: Record {
   @Field
   var kty: String
 
@@ -52,7 +52,7 @@ struct VerifyOptions: Record {
   var requiredClaims: [String]?
 }
 
-struct VerifyResponse: Record {
+struct VerifyResult: Record {
   @Field
   var payload: String
 

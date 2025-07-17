@@ -1,5 +1,13 @@
 import React from 'react'
-import { Text, View, StyleSheet, Button, Alert, TextInput } from 'react-native'
+import {
+  Text,
+  View,
+  StyleSheet,
+  Button,
+  Alert,
+  TextInput,
+  Platform,
+} from 'react-native'
 import {
   digest,
   getRandomValues,
@@ -10,7 +18,6 @@ import {
 import { OAuthSession } from '@atproto/oauth-client'
 import { Agent } from '@atproto/api'
 import type { ReactNativeKey } from 'expo-atproto-auth'
-import * as Browser from 'expo-web-browser'
 
 const client = new ReactNativeOAuthClient({
   clientMetadata: {
@@ -109,32 +116,18 @@ export default function App() {
       <Button
         title="Open Sign In"
         onPress={async () => {
-          let url: URL
-          try {
-            url = await client.authorize(input ?? '')
-          } catch (e: any) {
-            Alert.alert('Error', e.toString())
-            return
-          }
-          const res = await Browser.openAuthSessionAsync(
-            url.toString(),
-            'at.hailey://auth/callback'
-          )
-
-          if (res.type === 'success') {
-            const resUrl = new URL(res.url)
-            try {
-              const params = new URLSearchParams(resUrl.hash.substring(1))
-              const callbackRes = await client.callback(params)
-              setSession(callbackRes.session)
-
-              const newAgent = new Agent(callbackRes.session)
-              setAgent(newAgent)
-            } catch (e: any) {
-              Alert.alert('Error', e.toString())
-            }
+          const res = await client.signIn(input ?? '')
+          if (res.status === 'success') {
+            setSession(res.session)
+            const newAgent = new Agent(res.session)
+            setAgent(newAgent)
+          } else if (res.status === 'error') {
+            Alert.alert('Error', (res.error as any).toString())
           } else {
-            Alert.alert('Error', `Received non-success status: ${res.type}`)
+            Alert.alert(
+              'Error',
+              `Received unknown WebResultType: ${res.status}`
+            )
           }
         }}
       />
@@ -177,7 +170,7 @@ export default function App() {
         onPress={async () => {
           try {
             await agent?.post({
-              text: 'Test post from Expo Atproto Auth example',
+              text: `Test post from Expo Atproto Auth example using platform ${Platform.OS}`,
             })
           } catch (e: any) {
             Alert.alert('Error', e.toString())

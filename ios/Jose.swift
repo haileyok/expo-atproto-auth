@@ -35,7 +35,7 @@ class JoseUtil: NSObject {
     return jws.compactSerializedString
   }
 
-  static func verifyJwt(token: String, jwk: SecKey, options: VerifyOptions) throws -> VerifyResponse {
+  static func verifyJwt(token: String, jwk: SecKey, options: VerifyOptions) throws -> VerifyResult {
     guard let jws = try? JWS(compactSerialization: token),
           let verifier = Verifier(verifyingAlgorithm: .ES256, key: jwk),
           let validation = try? jws.validate(using: verifier)
@@ -128,7 +128,7 @@ class JoseUtil: NSObject {
       }
     }
 
-    let res = VerifyResponse()
+    let res = VerifyResult()
     res.payload = payload
     res.protectedHeader = protectedHeader
 

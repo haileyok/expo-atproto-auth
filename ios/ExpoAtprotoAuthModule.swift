@@ -23,29 +23,23 @@ public class ExpoAtprotoAuthModule: Module {
       return CryptoUtil.getRandomValues(byteLength: byteLength)
     }
 
-    Function("generatePrivateJwk") { (algo: String) throws -> JWK in
+    Function("generatePrivateJwk") { (algo: String) throws -> EncodedJWK in
       if algo != "ES256" {
         throw ExpoAtprotoAuthError.unsupportedAlgorithm(algo)
       }
       return CryptoUtil.generateJwk()
     }
 
-    Function("createJwt") { (header: String, payload: String, jwk: JWK) throws -> String in
-      let key = try CryptoUtil.importJwk(x: jwk.x, y: jwk.y, d: jwk.d)
-      let jwt = try JoseUtil.createJwt(header: header, payload: payload, jwk: key)
+    Function("createJwt") { (header: String, payload: String, jwk: EncodedJWK) throws -> String in
+      let jwk = try CryptoUtil.decodeJwk(x: jwk.x, y: jwk.y, d: jwk.d)
+      let jwt = try JoseUtil.createJwt(header: header, payload: payload, jwk: jwk)
       return jwt
     }
 
-    Function("verifyJwt") { (token: String, jwk: JWK, options: VerifyOptions) throws -> VerifyResponse in
-      let key = try CryptoUtil.importJwk(x: jwk.x, y: jwk.y, d: jwk.d)
-      let res = try JoseUtil.verifyJwt(token: token, jwk: key, options: options)
+    Function("verifyJwt") { (token: String, jwk: EncodedJWK, options: VerifyOptions) throws -> VerifyResult in
+      let jwk = try CryptoUtil.decodeJwk(x: jwk.x, y: jwk.y, d: jwk.d)
+      let res = try JoseUtil.verifyJwt(token: token, jwk: jwk, options: options)
       return res
-    }
-
-    AsyncFunction("setValueAsync") { (value: String) in
-      self.sendEvent("onChange", [
-        "value": value
-      ])
     }
   }
 }

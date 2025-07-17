@@ -5,9 +5,11 @@ import {
   type OAuthResponseMode,
   atprotoLoopbackClientMetadata,
   OAuthClient,
+  OAuthSession,
 } from '@atproto/oauth-client'
 import { ReactNativeRuntimeImplementation } from './react-native-runtime-implementation'
 import { ReactNativeOAuthDatabase } from './react-native-oauth-database'
+import { openAuthSessionAsync, WebBrowserResultType } from 'expo-web-browser'
 
 export type Simplify<T> = { [K in keyof T]: T[K] } & NonNullable<unknown>
 
@@ -33,7 +35,7 @@ export type ReactNativeOAuthClientOptions = Simplify<
   >
 >
 
-export class ReactNativeOAuthClient extends OAuthClient {
+export class ExpoOAuthClient extends OAuthClient {
   constructor({
     responseMode = 'fragment',
     ...options
@@ -65,5 +67,37 @@ export class ReactNativeOAuthClient extends OAuthClient {
       protectedResourceMetadataCache:
         database.getProtectedResourceMetadataCache(),
     })
+  }
+
+  async signIn(
+    input: string
+  ): Promise<
+    | { status: WebBrowserResultType }
+    | { status: 'error'; error: unknown }
+    | { status: 'success'; session: OAuthSession }
+  > {
+    let url: URL
+    try {
+      url = await this.authorize(input)
+    } catch (e: unknown) {
+      return { status: 'error', error: e }
+    }
+
+    const res = await openAuthSessionAsync(
+      url.toString(),
+      this.clientMetadata.redirect_uris[0],
+      {
+        createTask: false,
+      }
+    )
+
+    if (res.type === 'success') {
+      const resUrl = new URL(res.url)
+      const params = new URLSearchParams(resUrl.hash.substring(1))
+      const callbackRes = await this.callback(params)
+      return { status: 'success', session: callbackRes.session }
+    } else {
+      return { status: res.type }
+    }
   }
 }

@@ -23,7 +23,7 @@ export type VerifyOptions = {
   requiredClaims?: string[]
 }
 
-export type VerifyResponse = {
+export type VerifyResult = {
   payload: string
   protectedHeader: JwtHeader
 }

@@ -41,3 +41,7 @@ android {
     abortOnError false
   }
 }
+
+dependencies {
+  implementation "com.nimbusds:nimbus-jose-jwt:10.3.1"
+}
