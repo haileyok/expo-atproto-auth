@@ -1,5 +1,11 @@
-// Reexport the native module. On web, it will be resolved to ExpoAtprotoAuthModule.web.ts
-// and on native platforms to ExpoAtprotoAuthModule.ts
-export { default } from './ExpoAtprotoAuthModule';
-export { default as ExpoAtprotoAuthView } from './ExpoAtprotoAuthView';
-export * from  './ExpoAtprotoAuth.types';
+export { default as NativeModule } from "./ExpoAtprotoAuthModule";
+export * from "./ExpoAtprotoAuth.types";
+export {
+  generateJwk,
+  digest,
+  createJwt,
+  getRandomValues,
+  verifyJwt,
+  ReactNativeKey,
+} from "./react-native-key";
+export { ReactNativeOAuthClient } from "./react-native-oauth-client";

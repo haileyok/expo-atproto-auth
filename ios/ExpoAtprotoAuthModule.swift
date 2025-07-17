@@ -1,48 +1,51 @@
 import ExpoModulesCore
 
+enum ExpoAtprotoAuthError: Error {
+  case unsupportedAlgorithm(String)
+  case invalidJwk
+  case invalidHeader(String)
+  case invalidPayload(String)
+  case nullSigner
+}
+
 public class ExpoAtprotoAuthModule: Module {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
   public func definition() -> ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ExpoAtprotoAuth')` in JavaScript.
     Name("ExpoAtprotoAuth")
 
-    // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-    Constants([
-      "PI": Double.pi
-    ])
-
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
-
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      return "Hello world! 👋"
+    Function("digest") { (data: Data, algo: String) throws -> Data in
+      if algo != "sha256" {
+        throw ExpoAtprotoAuthError.unsupportedAlgorithm(algo)
+      }
+      return CryptoUtil.digest(data: data)
     }
 
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
+    Function("getRandomValues") { (byteLength: Int) -> Data in
+      return CryptoUtil.getRandomValues(byteLength: byteLength)
+    }
+
+    Function("generatePrivateJwk") { (algo: String) throws -> JWK in
+      if algo != "ES256" {
+        throw ExpoAtprotoAuthError.unsupportedAlgorithm(algo)
+      }
+      return CryptoUtil.generateJwk()
+    }
+
+    Function("createJwt") { (header: String, payload: String, jwk: JWK) throws -> String in
+      let key = try CryptoUtil.importJwk(x: jwk.x, y: jwk.y, d: jwk.d)
+      let jwt = try JoseUtil.createJwt(header: header, payload: payload, jwk: key)
+      return jwt
+    }
+
+    Function("verifyJwt") { (token: String, jwk: JWK, options: VerifyOptions) throws -> VerifyResponse in
+      let key = try CryptoUtil.importJwk(x: jwk.x, y: jwk.y, d: jwk.d)
+      let res = try JoseUtil.verifyJwt(token: token, jwk: key, options: options)
+      return res
+    }
+
     AsyncFunction("setValueAsync") { (value: String) in
-      // Send an event to JavaScript.
       self.sendEvent("onChange", [
         "value": value
       ])
-    }
-
-    // Enables the module to be used as a native view. Definition components that are accepted as part of the
-    // view definition: Prop, Events.
-    View(ExpoAtprotoAuthView.self) {
-      // Defines a setter for the `url` prop.
-      Prop("url") { (view: ExpoAtprotoAuthView, url: URL) in
-        if view.webView.url != url {
-          view.webView.load(URLRequest(url: url))
-        }
-      }
-
-      Events("onLoad")
     }
   }
 }

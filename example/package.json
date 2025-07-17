@@ -10,9 +10,18 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@atproto/api": "^0.15.26",
+    "@atproto/oauth-client": "^0.5.1",
+    "abortcontroller-polyfill": "^1.7.8",
+    "event-target-polyfill": "^0.0.4",
     "expo": "~53.0.17",
+    "expo-web-browser": "^14.2.0",
     "react": "19.0.0",
-    "react-native": "0.79.5"
+    "react-native": "0.79.5",
+    "react-native-mmkv": "^3.3.0",
+    "react-native-url-polyfill": "^2.0.0",
+    "text-encoding": "^0.7.0",
+    "web-streams-polyfill": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
