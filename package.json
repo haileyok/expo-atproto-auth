@@ -7,7 +7,8 @@
   "scripts": {
     "build": "expo-module build",
     "clean": "expo-module clean",
-    "lint": "expo-module lint",
+    "typecheck": "tsc",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "test": "expo-module test",
     "prepare": "expo-module prepare",
     "prepublishOnly": "expo-module prepublishOnly",
@@ -30,9 +31,22 @@
   "homepage": "https://github.com/haileyok/expo-atproto-auth#readme",
   "devDependencies": {
     "@atproto/oauth-client": "^0.5.1",
+    "@eslint/compat": "^1.2.7",
+    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/js": "^9.22.0",
+    "@react-native/eslint-config": "^0.78.0",
     "@types/react": "~19.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.3",
     "expo": "~53.0.0",
     "expo-module-scripts": "^4.1.9",
+    "jest": "^29.7.0",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
+    "prettier": "^3.0.3",
     "react-native": "0.79.1",
     "react-native-mmkv": "^3.3.0"
   },
@@ -43,8 +57,12 @@
     "react-native": "*",
     "react-native-mmkv": "*"
   },
-  "dependencies": {
-    "patch-package": "^8.0.0",
-    "postinstall-postinstall": "^2.1.0"
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false,
+    "semi": false
   }
 }

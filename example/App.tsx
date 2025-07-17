@@ -1,53 +1,53 @@
-import React from "react";
-import { Text, View, StyleSheet, Button, Alert, TextInput } from "react-native";
+import React from 'react'
+import { Text, View, StyleSheet, Button, Alert, TextInput } from 'react-native'
 import {
   digest,
   getRandomValues,
   createJwt,
   generateJwk,
   ReactNativeOAuthClient,
-} from "expo-atproto-auth";
-import { OAuthSession } from "@atproto/oauth-client";
-import { Agent } from "@atproto/api";
-import type { ReactNativeKey } from "expo-atproto-auth";
-import * as Browser from "expo-web-browser";
+} from 'expo-atproto-auth'
+import { OAuthSession } from '@atproto/oauth-client'
+import { Agent } from '@atproto/api'
+import type { ReactNativeKey } from 'expo-atproto-auth'
+import * as Browser from 'expo-web-browser'
 
 const client = new ReactNativeOAuthClient({
   clientMetadata: {
-    client_id: "https://hailey.at/oauth-client-metadata.json",
-    client_name: "React Native OAuth Client Demo",
-    client_uri: "https://hailey.at",
-    redirect_uris: ["at.hailey:/auth/callback"],
-    scope: "atproto transition:generic",
-    token_endpoint_auth_method: "none",
-    response_types: ["code"],
-    grant_types: ["authorization_code", "refresh_token"],
-    application_type: "native",
+    client_id: 'https://hailey.at/oauth-client-metadata.json',
+    client_name: 'React Native OAuth Client Demo',
+    client_uri: 'https://hailey.at',
+    redirect_uris: ['at.hailey:/auth/callback'],
+    scope: 'atproto transition:generic',
+    token_endpoint_auth_method: 'none',
+    response_types: ['code'],
+    grant_types: ['authorization_code', 'refresh_token'],
+    application_type: 'native',
     dpop_bound_access_tokens: true,
   },
-  handleResolver: "https://bsky.social",
-});
+  handleResolver: 'https://bsky.social',
+})
 
 export default function App() {
-  const [values, setValues] = React.useState<Uint8Array>();
-  const [sha, setSha] = React.useState<Uint8Array>();
-  const [jwt, setJwt] = React.useState<string>();
+  const [values, setValues] = React.useState<Uint8Array>()
+  const [sha, setSha] = React.useState<Uint8Array>()
+  const [jwt, setJwt] = React.useState<string>()
   const [privateJwk, setPrivateJwk] = React.useState<
     ReactNativeKey | undefined
-  >();
-  const [session, setSession] = React.useState<OAuthSession>();
-  const [input, setInput] = React.useState<string>();
-  const [agent, setAgent] = React.useState<Agent>();
+  >()
+  const [session, setSession] = React.useState<OAuthSession>()
+  const [input, setInput] = React.useState<string>()
+  const [agent, setAgent] = React.useState<Agent>()
 
   return (
     <View style={styles.container}>
-      <Text>Current Account: {session ? session.did : "No Account"}</Text>
+      <Text>Current Account: {session ? session.did : 'No Account'}</Text>
       <Text>Values: {values}</Text>
       <Button
         title="Generate Random Values"
         onPress={() => {
-          const newValues = getRandomValues(400);
-          setValues(newValues);
+          const newValues = getRandomValues(400)
+          setValues(newValues)
         }}
       />
       <Text>SHA: {sha}</Text>
@@ -55,16 +55,16 @@ export default function App() {
         title="SHA from values"
         onPress={() => {
           if (!values) {
-            return;
+            return
           }
-          let newSha: Uint8Array | undefined;
+          let newSha: Uint8Array | undefined
           try {
-            newSha = digest(values, "sha256");
+            newSha = digest(values, 'sha256')
           } catch (e: any) {
-            Alert.alert("Error", e.toString());
-            return;
+            Alert.alert('Error', e.toString())
+            return
           }
-          setSha(newSha);
+          setSha(newSha)
         }}
       />
       <Text>JWT: {jwt}</Text>
@@ -72,31 +72,31 @@ export default function App() {
         title="Create JWT"
         onPress={() => {
           if (!privateJwk) {
-            return;
+            return
           }
 
-          let newJwt: string | undefined;
+          let newJwt: string | undefined
           try {
-            newJwt = createJwt("", "", privateJwk);
+            newJwt = createJwt('', '', privateJwk)
           } catch (e: any) {
-            Alert.alert("Error", e.toString());
-            return;
+            Alert.alert('Error', e.toString())
+            return
           }
-          setJwt(newJwt);
+          setJwt(newJwt)
         }}
       />
       <Text>Priv Key: {privateJwk?.kid}</Text>
       <Button
         title="Create JWK"
         onPress={() => {
-          let newJwk: ReactNativeKey | undefined;
+          let newJwk: ReactNativeKey | undefined
           try {
-            newJwk = generateJwk("ES256");
+            newJwk = generateJwk('ES256')
           } catch (e: any) {
-            Alert.alert("Error", e.toString());
-            return;
+            Alert.alert('Error', e.toString())
+            return
           }
-          setPrivateJwk(newJwk);
+          setPrivateJwk(newJwk)
         }}
       />
 
@@ -109,32 +109,32 @@ export default function App() {
       <Button
         title="Open Sign In"
         onPress={async () => {
-          let url: URL;
+          let url: URL
           try {
-            url = await client.authorize(input ?? "");
+            url = await client.authorize(input ?? '')
           } catch (e: any) {
-            Alert.alert("Error", e.toString());
-            return;
+            Alert.alert('Error', e.toString())
+            return
           }
           const res = await Browser.openAuthSessionAsync(
             url.toString(),
-            "at.hailey://auth/callback",
-          );
+            'at.hailey://auth/callback'
+          )
 
-          if (res.type === "success") {
-            const resUrl = new URL(res.url);
+          if (res.type === 'success') {
+            const resUrl = new URL(res.url)
             try {
-              const params = new URLSearchParams(resUrl.hash.substring(1));
-              const callbackRes = await client.callback(params);
-              setSession(callbackRes.session);
+              const params = new URLSearchParams(resUrl.hash.substring(1))
+              const callbackRes = await client.callback(params)
+              setSession(callbackRes.session)
 
-              const agent = new Agent(callbackRes.session);
-              setAgent(agent);
+              const newAgent = new Agent(callbackRes.session)
+              setAgent(newAgent)
             } catch (e: any) {
-              Alert.alert("Error", e.toString());
+              Alert.alert('Error', e.toString())
             }
           } else {
-            Alert.alert("Error", `Received non-success status: ${res.type}`);
+            Alert.alert('Error', `Received non-success status: ${res.type}`)
           }
         }}
       />
@@ -143,13 +143,13 @@ export default function App() {
         title="Restore from DID"
         onPress={async () => {
           try {
-            const restoreRes = await client.restore(input ?? "");
-            setSession(restoreRes);
+            const restoreRes = await client.restore(input ?? '')
+            setSession(restoreRes)
 
-            const agent = new Agent(restoreRes);
-            setAgent(agent);
+            const newAgent = new Agent(restoreRes)
+            setAgent(newAgent)
           } catch (e: any) {
-            Alert.alert("Error", e.toString());
+            Alert.alert('Error', e.toString())
           }
         }}
       />
@@ -159,14 +159,14 @@ export default function App() {
         onPress={async () => {
           try {
             const res = await agent?.getProfile({
-              actor: session?.did ?? "",
-            });
+              actor: session?.did ?? '',
+            })
             Alert.alert(
-              "Profile",
-              `Display Name: ${res?.data.displayName}, Bio: ${res?.data.description}`,
-            );
+              'Profile',
+              `Display Name: ${res?.data.displayName}, Bio: ${res?.data.description}`
+            )
           } catch (e: any) {
-            Alert.alert("Error", e.toString());
+            Alert.alert('Error', e.toString())
           }
         }}
         disabled={!agent}
@@ -177,22 +177,22 @@ export default function App() {
         onPress={async () => {
           try {
             await agent?.post({
-              text: "Test post from Expo Atproto Auth example",
-            });
+              text: 'Test post from Expo Atproto Auth example',
+            })
           } catch (e: any) {
-            Alert.alert("Error", e.toString());
+            Alert.alert('Error', e.toString())
           }
         }}
         disabled={!agent}
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-});
+})

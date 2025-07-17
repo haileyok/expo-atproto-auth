@@ -1,5 +1,5 @@
-export { default as NativeModule } from "./ExpoAtprotoAuthModule";
-export * from "./ExpoAtprotoAuth.types";
+export { default as NativeModule } from './ExpoAtprotoAuthModule'
+export * from './ExpoAtprotoAuth.types'
 export {
   generateJwk,
   digest,
@@ -7,5 +7,5 @@ export {
   getRandomValues,
   verifyJwt,
   ReactNativeKey,
-} from "./react-native-key";
-export { ReactNativeOAuthClient } from "./react-native-oauth-client";
+} from './react-native-key'
+export { ReactNativeOAuthClient } from './react-native-oauth-client'
